@@ -39,12 +39,14 @@ export default function Home() {
     return (
       <div style={{ padding: 40 }}>
         <h1>🔐 ADNclubACG — Iniciar sesión</h1>
+
         <input
           placeholder="Usuario"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
         />
         <br /><br />
+
         <input
           type="password"
           placeholder="Contraseña"
@@ -52,6 +54,7 @@ export default function Home() {
           onChange={(e) => setClave(e.target.value)}
         />
         <br /><br />
+
         <button onClick={login}>Entrar</button>
       </div>
     );
@@ -62,12 +65,14 @@ export default function Home() {
       <h1>🏕️ Panel ADNclubACG</h1>
 
       <h2>👥 Registrar conquistador</h2>
+
       <input
         placeholder="Nombre"
         value={nombre}
         onChange={(e) => setNombre(e.target.value)}
       />
       <br /><br />
+
       <button onClick={guardar}>Guardar</button>
     </div>
   );
