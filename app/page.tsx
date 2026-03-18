@@ -1,118 +1,74 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export default function Home() {
-  const [vista, setVista] = useState("menu");
+  const [usuario, setUsuario] = useState("");
+  const [clave, setClave] = useState("");
+  const [logueado, setLogueado] = useState(false);
+  const [nombre, setNombre] = useState("");
 
-  if (vista === "registro")
+  const login = async () => {
+    const { data } = await supabase
+      .from("usuarios")
+      .select("*")
+      .eq("usuario", usuario)
+      .eq("clave", clave)
+      .single();
+
+    if (data) setLogueado(true);
+    else alert("Usuario o contraseña incorrectos");
+  };
+
+  const guardar = async () => {
+    await supabase.from("miembros").insert({
+      nombre,
+      club: "Jerusalén",
+    });
+    alert("Conquistador guardado");
+    setNombre("");
+  };
+
+  if (!logueado) {
     return (
-      <main style={estilo}>
-        <h1>👤 Registrar Conquistador</h1>
-
-        <input placeholder="Nombre completo" style={input} />
-        <input placeholder="Edad" style={input} />
-        <input placeholder="Club" style={input} />
-        <input placeholder="Unidad" style={input} />
-
-        <button style={btn}>💾 Guardar</button>
-        <button style={btnSec} onClick={() => setVista("menu")}>
-          ⬅️ Volver
-        </button>
-      </main>
+      <div style={{ padding: 40 }}>
+        <h1>🔐 ADNclubACG — Iniciar sesión</h1>
+        <input
+          placeholder="Usuario"
+          value={usuario}
+          onChange={(e) => setUsuario(e.target.value)}
+        />
+        <br /><br />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={clave}
+          onChange={(e) => setClave(e.target.value)}
+        />
+        <br /><br />
+        <button onClick={login}>Entrar</button>
+      </div>
     );
-
-  if (vista === "asistencia")
-    return (
-      <main style={estilo}>
-        <h1>📅 Control de Asistencia</h1>
-        <p>Registro por fecha próximamente</p>
-
-        <button style={btnSec} onClick={() => setVista("menu")}>
-          ⬅️ Volver
-        </button>
-      </main>
-    );
-
-  if (vista === "clases")
-    return (
-      <main style={estilo}>
-        <h1>🎓 Clases y Especialidades</h1>
-        <p>Seguimiento de progreso JA</p>
-
-        <button style={btnSec} onClick={() => setVista("menu")}>
-          ⬅️ Volver
-        </button>
-      </main>
-    );
-
-  if (vista === "documentos")
-    return (
-      <main style={estilo}>
-        <h1>📄 Subir Documentos PDF</h1>
-        <input type="file" accept=".pdf" />
-        <p>Sube tarjetas de clase u otros documentos</p>
-
-        <button style={btnSec} onClick={() => setVista("menu")}>
-          ⬅️ Volver
-        </button>
-      </main>
-    );
+  }
 
   return (
-    <main style={estilo}>
-      <h1>🏕️ ADNclubACG — Sistema Oficial</h1>
-      <h3>Asociación Dominicana del Norte 🇩🇴</h3>
+    <div style={{ padding: 40 }}>
+      <h1>🏕️ Panel ADNclubACG</h1>
 
-      <hr />
-
-      <button style={btn} onClick={() => setVista("registro")}>
-        👥 Registrar Conquistador
-      </button>
-
-      <button style={btn} onClick={() => setVista("asistencia")}>
-        📅 Control de Asistencia
-      </button>
-
-      <button style={btn} onClick={() => setVista("clases")}>
-        🎓 Clases y Especialidades
-      </button>
-
-      <button style={btn} onClick={() => setVista("documentos")}>
-        📄 Subir PDFs
-      </button>
-
-      <p style={{ marginTop: 40 }}>
-        💻 Plataforma institucional ADNclubACG
-      </p>
-    </main>
+      <h2>👥 Registrar conquistador</h2>
+      <input
+        placeholder="Nombre"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+      />
+      <br /><br />
+      <button onClick={guardar}>Guardar</button>
+    </div>
   );
 }
-
-const estilo = {
-  padding: 40,
-  fontFamily: "Arial",
-};
-
-const btn = {
-  display: "block",
-  width: 320,
-  padding: 15,
-  margin: "10px 0",
-  fontSize: 18,
-  cursor: "pointer",
-};
-
-const btnSec = {
-  padding: 12,
-  marginTop: 20,
-  fontSize: 16,
-  cursor: "pointer",
-};
-
-const input = {
-  display: "block",
-  padding: 10,
-  margin: "8px 0",
-  width: 300,
-};
