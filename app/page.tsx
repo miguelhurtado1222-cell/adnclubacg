@@ -1,5 +1,7 @@
 "use client";
 
+}const [cargando, setCargando] = useState(true);
+
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
@@ -20,7 +22,12 @@ export default function Home() {
 
   useEffect(() => {
     cargar();
-  }, []);
+  }, []); 
+}useEffect(() => {
+  setTimeout(() => {
+    setCargando(false);
+  }, 2000);
+}, []);
 
   const estiloBoton = {
     padding: 20,
@@ -34,7 +41,23 @@ export default function Home() {
   };
 
   // 🏕️ MENU PRINCIPAL
-  if (vista === "menu") {
+  if (vista === "menu")if (cargando) {
+  return (
+    <div style={{
+      height: "100vh",
+      background: "linear-gradient(red, orange)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column",
+      color: "white"
+    }}>
+      <h1 style={{ fontSize: 40 }}>🏕️</h1>
+      <h2>ADNclubACG</h2>
+      <p>Cargando...</p>
+    </div>
+  );
+} {
     return (
       <div style={{
         minHeight: "100vh",
@@ -157,5 +180,4 @@ export default function Home() {
         />
       </div>
     );
-  }
-}
+ 
