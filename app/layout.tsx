@@ -32,3 +32,5 @@ export default function RootLayout({
     </html>
   );
 }
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#ff0000" />

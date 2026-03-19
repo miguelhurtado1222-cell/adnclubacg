@@ -1,0 +1,8 @@
+{
+  "name": "ADNclubACG",
+  "short_name": "ADNclub",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffcc00",
+  "theme_color": "#ff0000"
+}
