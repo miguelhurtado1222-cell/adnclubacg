@@ -88,38 +88,32 @@ export default function Home() {
 
   return (
     <div style={{ padding: 40 }}>
-      <h1>🏕️ ADNclubACG PRO MAX ({rol})</h1>
+     <h1>🏕️ ADNclubACG Dashboard ({rol})</h1>
 
-      {rol === "director" && (
-        <>
-          <h2>Registrar</h2>
-          <input placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} /><br />
-          <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} /><br />
-          <input placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} /><br />
-          <input placeholder="Dirección" value={direccion} onChange={(e) => setDireccion(e.target.value)} /><br />
+<h2>📊 Estadísticas</h2>
 
-          <select value={club} onChange={(e) => setClub(e.target.value)}>
-            <option>Jerusalén</option>
-            <option>Betania</option>
-          </select>
+<div style={{ display: "flex", gap: 20, marginBottom: 20 }}>
 
-          <br /><br />
-          <button onClick={guardar}>Guardar</button>
+  <div style={{ border: "1px solid #ccc", padding: 10 }}>
+    👥 Total Miembros <br />
+    <b>{miembros.length}</b>
+  </div>
 
-          <br /><br />
-          <input type="file" onChange={async (e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
+  <div style={{ border: "1px solid #ccc", padding: 10 }}>
+    🏕️ Jerusalén <br />
+    <b>{miembros.filter(m => m.club === "Jerusalén").length}</b>
+  </div>
 
-            await supabase.storage
-              .from("archivos")
-              .upload(file.name, file);
+  <div style={{ border: "1px solid #ccc", padding: 10 }}>
+    🏕️ Betania <br />
+    <b>{miembros.filter(m => m.club === "Betania").length}</b>
+  </div>
+h3>📅 Asistencia de hoy</h3>
 
-            alert("Archivo subido");
-          }} />
-        </>
-      )}
-
+<div style={{ border: "1px solid #ccc", padding: 10 }}>
+  Hoy: {new Date().toLocaleDateString()}
+</div>
+ </div>
       <h2>Miembros</h2>
 
       {miembros.map((m) => (
