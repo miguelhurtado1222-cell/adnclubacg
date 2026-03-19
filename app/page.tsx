@@ -10,7 +10,7 @@ const supabase = createClient(
 
 export default function Home() {
   const [vista, setVista] = useState("menu");
-  const [miembros, setMiembros] = useState([]);
+  const [miembros, setMiembros] = useState<any[]>([]);
   const [nombre, setNombre] = useState("");
 
   const cargar = async () => {
@@ -22,20 +22,45 @@ export default function Home() {
     cargar();
   }, []);
 
-  // MENÚ
+  const estiloBoton = {
+    padding: 20,
+    margin: 10,
+    fontSize: 18,
+    borderRadius: 15,
+    border: "none",
+    width: "100%",
+    background: "linear-gradient(red, orange)",
+    color: "white",
+  };
+
+  // 🏕️ MENU PRINCIPAL
   if (vista === "menu") {
     return (
-      <div style={{ padding: 20 }}>
-        <h1>🏕️ ADNclubACG</h1>
+      <div style={{
+        minHeight: "100vh",
+        background: "linear-gradient(yellow, red)",
+        padding: 20
+      }}>
+        <h1 style={{ textAlign: "center", color: "white" }}>
+          🏕️ ADNclubACG
+        </h1>
 
-        <button onClick={() => setVista("miembros")}>👥 Miembros</button>
-        <button onClick={() => setVista("asistencia")}>📅 Asistencia</button>
-        <button onClick={() => setVista("archivos")}>📄 Archivos</button>
+        <button style={estiloBoton} onClick={() => setVista("miembros")}>
+          👥 Miembros
+        </button>
+
+        <button style={estiloBoton} onClick={() => setVista("asistencia")}>
+          📅 Asistencia
+        </button>
+
+        <button style={estiloBoton} onClick={() => setVista("archivos")}>
+          📄 Archivos
+        </button>
       </div>
     );
   }
 
-  // MIEMBROS
+  // 👥 MIEMBROS
   if (vista === "miembros") {
     return (
       <div style={{ padding: 20 }}>
@@ -44,12 +69,14 @@ export default function Home() {
         <h2>👥 Miembros</h2>
 
         <input
+          style={{ width: "100%", padding: 10 }}
           placeholder="Nombre"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
         />
 
         <button
+          style={estiloBoton}
           onClick={async () => {
             await supabase.from("miembros").insert({ nombre });
             setNombre("");
@@ -59,31 +86,45 @@ export default function Home() {
           Guardar
         </button>
 
-        {miembros.map((m: any) => (
-          <div key={m.id}>{m.nombre}</div>
+        {miembros.map((m) => (
+          <div key={m.id} style={{
+            background: "#fff",
+            padding: 10,
+            marginTop: 10,
+            borderRadius: 10
+          }}>
+            {m.nombre}
+          </div>
         ))}
       </div>
     );
   }
 
-  // ASISTENCIA
+  // 📅 ASISTENCIA
   if (vista === "asistencia") {
     return (
       <div style={{ padding: 20 }}>
         <button onClick={() => setVista("menu")}>⬅️ Volver</button>
         <h2>📅 Asistencia</h2>
 
-        {miembros.map((m: any) => (
-          <div key={m.id}>
+        {miembros.map((m) => (
+          <div key={m.id} style={{
+            background: "#fff",
+            padding: 10,
+            marginTop: 10,
+            borderRadius: 10
+          }}>
             {m.nombre}
+
             <button
+              style={{ marginLeft: 10 }}
               onClick={async () => {
                 await supabase.from("asistencia").insert({
                   miembro_id: m.id,
                   fecha: new Date().toISOString(),
                   presente: true,
                 });
-                alert("Asistencia guardada");
+                alert("Guardado");
               }}
             >
               ✅
@@ -94,7 +135,7 @@ export default function Home() {
     );
   }
 
-  // ARCHIVOS
+  // 📄 ARCHIVOS
   if (vista === "archivos") {
     return (
       <div style={{ padding: 20 }}>
