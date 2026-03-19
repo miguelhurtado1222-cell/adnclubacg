@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -9,10 +9,17 @@ const supabase = createClient(
 );
 
 export default function Home() {
+  const [logueado, setLogueado] = useState(false);
   const [usuario, setUsuario] = useState("");
   const [clave, setClave] = useState("");
-  const [logueado, setLogueado] = useState(false);
+
   const [nombre, setNombre] = useState("");
+  const [fecha, setFecha] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [club, setClub] = useState("Jerusalén");
+
+  const [miembros, setMiembros] = useState<any[]>([]);
 
   const login = async () => {
     const { data } = await supabase
@@ -23,38 +30,49 @@ export default function Home() {
       .single();
 
     if (data) setLogueado(true);
-    else alert("Usuario o contraseña incorrectos");
+    else alert("Usuario incorrecto");
+  };
+
+  const cargarMiembros = async () => {
+    const { data } = await supabase.from("miembros").select("*");
+    if (data) setMiembros(data);
   };
 
   const guardar = async () => {
     await supabase.from("miembros").insert({
       nombre,
-      club: "Jerusalén",
+      fecha_nacimiento: fecha,
+      telefono,
+      direccion,
+      club,
     });
-    alert("Conquistador guardado");
+
+    alert("Guardado");
     setNombre("");
+    setFecha("");
+    setTelefono("");
+    setDireccion("");
+
+    cargarMiembros();
   };
+
+  const eliminar = async (id: string) => {
+    await supabase.from("miembros").delete().eq("id", id);
+    cargarMiembros();
+  };
+
+  useEffect(() => {
+    if (logueado) cargarMiembros();
+  }, [logueado]);
 
   if (!logueado) {
     return (
       <div style={{ padding: 40 }}>
-        <h1>🔐 ADNclubACG — Iniciar sesión</h1>
-
-        <input
-          placeholder="Usuario"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-        />
+        <h1>🔐 ADNclubACG Login</h1>
+        <input placeholder="Usuario" onChange={(e) => setUsuario(e.target.value)} />
         <br /><br />
-
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={clave}
-          onChange={(e) => setClave(e.target.value)}
-        />
+        <input type="password" placeholder="Clave" onChange={(e) => setClave(e.target.value)} />
         <br /><br />
-
         <button onClick={login}>Entrar</button>
       </div>
     );
@@ -62,18 +80,30 @@ export default function Home() {
 
   return (
     <div style={{ padding: 40 }}>
-      <h1>🏕️ Panel ADNclubACG</h1>
+      <h1>🏕️ ADNclubACG PRO</h1>
 
-      <h2>👥 Registrar conquistador</h2>
+      <h2>Registrar</h2>
+      <input placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} /><br />
+      <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} /><br />
+      <input placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} /><br />
+      <input placeholder="Dirección" value={direccion} onChange={(e) => setDireccion(e.target.value)} /><br />
 
-      <input
-        placeholder="Nombre"
-        value={nombre}
-        onChange={(e) => setNombre(e.target.value)}
-      />
+      <select value={club} onChange={(e) => setClub(e.target.value)}>
+        <option>Jerusalén</option>
+        <option>Betania</option>
+      </select>
+
       <br /><br />
-
       <button onClick={guardar}>Guardar</button>
+
+      <h2>Miembros</h2>
+
+      {miembros.map((m) => (
+        <div key={m.id} style={{ border: "1px solid #ccc", margin: 5, padding: 5 }}>
+          {m.nombre} - {m.club}
+          <button onClick={() => eliminar(m.id)}>❌</button>
+        </div>
+      ))}
     </div>
   );
 }
