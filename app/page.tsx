@@ -140,4 +140,11 @@ h3>📅 Asistencia de hoy</h3>
       ))}
     </div>
   );
-}
+}useEffect(() => {
+  if (logueado) cargar();
+}, [logueado]);
+useEffect(() => {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js");
+  }
+}, []);
